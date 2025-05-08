@@ -30,6 +30,7 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
     private ProductosControlador productosController;
     private Productos producto;
     private DefaultTableModel model;
+    private boolean pdfGenerado = false;
 
     public ProductosView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -86,6 +87,8 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
         btnGenerarPDF = new javax.swing.JButton();
         btnVerTDatos = new javax.swing.JButton();
         lblIndicaciónpdf = new javax.swing.JLabel();
+        lblNotaProduct = new javax.swing.JLabel();
+        lblMantenerMargen = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Gestión de Productos ");
@@ -243,6 +246,11 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
         txtCant.setEditable(false);
         txtCant.setBackground(new java.awt.Color(204, 204, 204));
         txtCant.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCant.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCantActionPerformed(evt);
+            }
+        });
 
         tblProductos.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tblProductos.setModel(new javax.swing.table.DefaultTableModel(
@@ -292,6 +300,12 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
 
         lblIndicaciónpdf.setForeground(new java.awt.Color(255, 255, 255));
 
+        lblNotaProduct.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNotaProduct.setForeground(new java.awt.Color(255, 255, 255));
+        lblNotaProduct.setText("El código del producto NO es editable");
+
+        lblMantenerMargen.setForeground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout pnlDatosLayout = new javax.swing.GroupLayout(pnlDatos);
         pnlDatos.setLayout(pnlDatosLayout);
         pnlDatosLayout.setHorizontalGroup(
@@ -332,8 +346,11 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
                             .addComponent(cmbProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(pnlDatosLayout.createSequentialGroup()
-                        .addComponent(lblIndicaciónpdf, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(lblNotaProduct)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblMantenerMargen, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblIndicaciónpdf, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlDatosLayout.createSequentialGroup()
                         .addComponent(lblCant)
                         .addGap(18, 18, 18)
@@ -389,17 +406,18 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDatosLayout.createSequentialGroup()
-                        .addComponent(lblIndicaciónpdf, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(lblCant)
-                                .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(btnVerTDatos, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnGenerarPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(lblIndicaciónpdf, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblMantenerMargen, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNotaProduct, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(18, 18, 18)
+                .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblCant)
+                        .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnVerTDatos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnGenerarPDF, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnTotalInventario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(46, 46, 46))
+                .addGap(28, 28, 28))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -414,7 +432,7 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pnlDatos, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 16, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -422,6 +440,8 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
         limpiar();
+        lblNotaProduct.setVisible(false);
+        txtCodigo.setEditable(true);
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnInsertarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertarActionPerformed
@@ -480,6 +500,8 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
             txtPrecio.setText(String.valueOf(tblProductos.getValueAt(fila, 3)));
             txtCantDisponible.setText(String.valueOf(tblProductos.getValueAt(fila, 4)));
             cmbProveedor.setSelectedItem(tblProductos.getValueAt(fila, 5));
+            lblNotaProduct.setVisible(true);
+            txtCodigo.setEditable(false);
         }
     }//GEN-LAST:event_tblProductosMousePressed
 
@@ -500,7 +522,10 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+
         if (tblProductos.getSelectedRowCount() == 1) {
+            int fila = tblProductos.getSelectedRow();
+
             try {
                 int codigo = Integer.parseInt(txtCodigo.getText().trim());
                 String nombre = txtNombre.getText().trim();
@@ -516,20 +541,42 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
 
                 int proveedorId = obtenerIdProveedor(proveedorNombre);
 
-                // Evaluar la cantidad editada
-                txtNombre.setText(nombre); // Para que el mensaje pueda usar el nombre
-                txtCantDisponible.setText(String.valueOf(cantidad)); // Para EvaluarCantidadEdit
+                // Obtener los valores actuales desde la tabla
+                int codigoTabla = Integer.parseInt(tblProductos.getValueAt(fila, 0).toString());
+                String nombreTabla = tblProductos.getValueAt(fila, 1).toString();
+                String categoriaTabla = tblProductos.getValueAt(fila, 2).toString();
+                double precioTabla = Double.parseDouble(tblProductos.getValueAt(fila, 3).toString());
+                int cantidadTabla = Integer.parseInt(tblProductos.getValueAt(fila, 4).toString());
+                String proveedorTabla = tblProductos.getValueAt(fila, 5).toString();
+
+                // Comparar si los datos son iguales
+                if (nombre.equals(nombreTabla)
+                        && categoria.equals(categoriaTabla)
+                        && precio == precioTabla
+                        && cantidad == cantidadTabla
+                        && proveedorNombre.equals(proveedorTabla)) {
+                    JOptionPane.showMessageDialog(this, "No se detectaron cambios para actualizar.", "Sin cambios", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+
+                // Evaluar cantidad y mostrar advertencia si es baja
+                txtNombre.setText(nombre);
+                txtCantDisponible.setText(String.valueOf(cantidad));
                 EvaluarCantidadEdit();
 
+                // Si hay cambios, realizar la actualización
                 producto = new Productos(codigo, nombre, categoria, precio, cantidad, proveedorId, null);
                 productosController.update(producto);
+                productosController.readAll();
                 limpiar();
+
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Por favor, verifica los valores ingresados.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione un registro para editar.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void bntBuscarXCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntBuscarXCategoriaActionPerformed
@@ -565,6 +612,7 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
 
     private void btnVerTDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerTDatosActionPerformed
         btnVisibleFalse();
+        lblIndicaciónpdf.setVisible(false); // Ocultar la etiqueta
         productosController.readAll();
         limpiar();
     }//GEN-LAST:event_btnVerTDatosActionPerformed
@@ -629,6 +677,9 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
             // Confirmar éxito
             JOptionPane.showMessageDialog(this, "PDF generado exitosamente en: " + rutaCompleta);
             limpiar();
+            pdfGenerado = true; // Indica que ya se generó un PDF
+            btnVerTDatos.setVisible(true);
+
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error al generar el PDF: " + e.getMessage());
             e.printStackTrace();
@@ -636,7 +687,7 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
     }//GEN-LAST:event_btnGenerarPDFActionPerformed
 
     private void btnTotalInventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTotalInventarioActionPerformed
-         List<Productos> productos = productosController.readAll();
+        List<Productos> productos = productosController.readAll();
 
         // Calculate total inventory value
         double totalInventario = productos.stream()
@@ -648,12 +699,20 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
                 this, "Valor total del inventario: " + totalInventario,
                 "Valor Total de Inventario", JOptionPane.INFORMATION_MESSAGE
         );
+        lblIndicaciónpdf.setVisible(false); // También ocultarlo aquí
         limpiar();
     }//GEN-LAST:event_btnTotalInventarioActionPerformed
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-        btnVisibleFalse();
+        if (!pdfGenerado) {
+            btnVisibleFalse(); // solo lo oculta si no se ha generado el PDF
+        }
+        lblNotaProduct.setVisible(false);
     }//GEN-LAST:event_formWindowActivated
+
+    private void txtCantActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCantActionPerformed
 
     @Override
     public void show(Productos ent) {
@@ -668,11 +727,23 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
     @Override
     public void showAll(List<Productos> productos) {
         String[] titulos = {"Código", "Nombre", "Categoría", "Precio", "Cantidad Disponible", "Proveedor"};
-        model = new DefaultTableModel(null, titulos);
+        DefaultTableModel model = new DefaultTableModel(null, titulos);
+
         for (Productos p : productos) {
-            model.addRow(new Object[]{p.getCodigo(), p.getNombre(), p.getCategoria(), p.getPrecio(), p.getCantDisponible(), obtenerNombreProveedor((p.getProveedor()))});
+            String nombreProveedor = obtenerNombreProveedor(p.getProveedor());
+            Object[] fila = {
+                p.getCodigo(),
+                p.getNombre(),
+                p.getCategoria(),
+                p.getPrecio(),
+                p.getCantDisponible(),
+                nombreProveedor
+            };
+            model.addRow(fila);
         }
-        tblProductos.setModel(model);
+
+        tblProductos.setModel(model); // <- MUY IMPORTANTE
+        txtCant.setText(String.valueOf(model.getRowCount()));
     }
 
     @Override
@@ -759,6 +830,8 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
 
     public void btnVisibleTrue() {
         btnGenerarPDF.setVisible(true);
+        lblIndicaciónpdf.setVisible(true); // <- Esta línea es clave
+
         lblIndicaciónpdf.setText("Generar inventario de la categoría mostrada");
         btnGenerarPDF.setText("Generar PDF");
         btnVerTDatos.setVisible(true);
@@ -769,7 +842,6 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
         btnGenerarPDF.setVisible(false);
         btnVerTDatos.setVisible(false);
     }
-
 
     public JTable getTblProductos() {
         return tblProductos;
@@ -816,6 +888,14 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -850,7 +930,9 @@ public class ProductosView extends javax.swing.JDialog implements Vista<Producto
     private javax.swing.JLabel lblDireccion;
     private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblIndicaciónpdf;
+    private javax.swing.JLabel lblMantenerMargen;
     private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblNotaProduct;
     private javax.swing.JLabel lblPuesto;
     private javax.swing.JLabel lblTelefono;
     private javax.swing.JPanel pnlBotones;

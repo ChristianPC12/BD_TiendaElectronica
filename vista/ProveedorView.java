@@ -189,7 +189,7 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
         lblBuscar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblBuscar.setForeground(new java.awt.Color(255, 255, 255));
         lblBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/search.png"))); // NOI18N
-        lblBuscar.setText("Buscar: ");
+        lblBuscar.setText("Buscar por nombre:");
 
         txtBuscar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtBuscar.addActionListener(new java.awt.event.ActionListener() {
@@ -236,11 +236,6 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
         txtCant.setEditable(false);
         txtCant.setBackground(new java.awt.Color(255, 255, 255));
         txtCant.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtCant.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCantActionPerformed(evt);
-            }
-        });
 
         txtId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
@@ -255,9 +250,9 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
             .addGroup(pnlDatosLayout.createSequentialGroup()
                 .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlDatosLayout.createSequentialGroup()
-                        .addComponent(lblBuscar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtBuscar))
+                        .addComponent(lblBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 453, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlDatosLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -363,39 +358,30 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
 
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        String titulos[] = {"Id", "Nombre", "Contacto", "Dirección"};
-        DefaultTableModel modeloOriginal = (DefaultTableModel) tblProveedor.getModel();
+    String searchQuery = txtBuscar.getText().trim().toLowerCase();
 
-        DefaultTableModel model = new DefaultTableModel(null, titulos);
+    if (searchQuery.isEmpty()) {
+        Controlador.readAll(); // Recargar todos los datos originales desde la BD
+        return;
+    }
 
-        String searchQuery = txtBuscar.getText().trim().toLowerCase();
+    String titulos[] = {"Id", "Nombre", "Contacto", "Dirección"};
+    DefaultTableModel modeloOriginal = (DefaultTableModel) tblProveedor.getModel();
+    DefaultTableModel model = new DefaultTableModel(null, titulos);
 
-        if (searchQuery.isEmpty()) {
+    for (int i = 0; i < modeloOriginal.getRowCount(); i++) {
+        String id = String.valueOf(modeloOriginal.getValueAt(i, 0)).toLowerCase();
+        String nombre = String.valueOf(modeloOriginal.getValueAt(i, 1)).toLowerCase();
+        String contacto = String.valueOf(modeloOriginal.getValueAt(i, 2)).toLowerCase();
+        String direccion = String.valueOf(modeloOriginal.getValueAt(i, 3)).toLowerCase();
 
-            for (int i = 0; i < modeloOriginal.getRowCount(); i++) {
-                String id = String.valueOf(modeloOriginal.getValueAt(i, 0));
-                String nombre = String.valueOf(modeloOriginal.getValueAt(i, 1));
-                String contacto = String.valueOf(modeloOriginal.getValueAt(i, 2));
-                String direccion = String.valueOf(modeloOriginal.getValueAt(i, 3));
-
-                model.addRow(new Object[]{id, nombre, contacto, direccion});
-            }
-        } else {
-
-            for (int i = 0; i < modeloOriginal.getRowCount(); i++) {
-                String id = String.valueOf(modeloOriginal.getValueAt(i, 0)).toLowerCase();
-                String nombre = String.valueOf(modeloOriginal.getValueAt(i, 1)).toLowerCase();
-                String contacto = String.valueOf(modeloOriginal.getValueAt(i, 2)).toLowerCase();
-                String direccion = String.valueOf(modeloOriginal.getValueAt(i, 3)).toLowerCase();
-
-                if (id.contains(searchQuery) || nombre.contains(searchQuery)
-                        || contacto.contains(searchQuery) || direccion.contains(searchQuery)) {
-                    model.addRow(new Object[]{id, nombre, contacto, direccion});
-                }
-            }
+        if (id.contains(searchQuery) || nombre.contains(searchQuery)
+                || contacto.contains(searchQuery) || direccion.contains(searchQuery)) {
+            model.addRow(new Object[]{id, nombre, contacto, direccion});
         }
+    }
 
-        tblProveedor.setModel(model);
+    tblProveedor.setModel(model);
 
     }//GEN-LAST:event_txtBuscarKeyReleased
 
@@ -417,9 +403,20 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
         int row = tblProveedor.getSelectedRow();
         if (row != -1) {
             int id = (int) tblProveedor.getValueAt(row, 0);
-            Proveedor proveedor = new Proveedor(id);
-            Controlador.delete(proveedor);
-            Controlador.readAll();
+
+            int opcion = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Estás seguro de que deseas eliminar al proveedor con ID: " + id + "?",
+                    "Confirmar eliminación",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            if (opcion == JOptionPane.YES_OPTION) {
+                Proveedor proveedor = new Proveedor(id);
+                Controlador.delete(proveedor);
+                Controlador.readAll();
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un proveedor para eliminar.");
         }
@@ -470,10 +467,6 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtBuscarActionPerformed
-
-    private void txtCantActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCantActionPerformed
 
     private void pnlDatosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlDatosMousePressed
         // TODO add your handling code here:
