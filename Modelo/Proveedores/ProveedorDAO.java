@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Clase DAO para gestionar operaciones CRUD sobre la entidad Proveedor.
- * Utiliza procedimientos almacenados y acceso JDBC para conectar con la base de datos.
- * 
+ * Clase DAO para gestionar operaciones CRUD sobre la entidad Proveedor. Utiliza
+ * procedimientos almacenados y acceso JDBC para conectar con la base de datos.
+ *
  * Autor: Christian Paniagua Castro
  */
 public class ProveedorDAO extends DAO<ProveedorDTO> {
@@ -79,8 +79,7 @@ public class ProveedorDAO extends DAO<ProveedorDTO> {
     public List<ProveedorDTO> readAll() throws SQLException {
         String query = "CALL ProveedoresReadAll";
         List<ProveedorDTO> list = new ArrayList<>();
-        try (PreparedStatement stmt = connection.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
+        try (PreparedStatement stmt = connection.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 list.add(new ProveedorDTO(
                         rs.getInt(1),
@@ -104,10 +103,12 @@ public class ProveedorDAO extends DAO<ProveedorDTO> {
         if (dto == null) {
             return false;
         }
-        String query = "CALL ProveedoresUpdate(?,?)";
+        String query = "CALL ProveedoresUpdate(?,?,?,?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, dto.getId());
-            stmt.setString(2, dto.getContacto());
+            stmt.setString(2, dto.getNombre());
+            stmt.setString(3, dto.getContacto());
+            stmt.setString(4, dto.getDireccion());
             return stmt.executeUpdate() > 0;
         }
     }
@@ -126,7 +127,7 @@ public class ProveedorDAO extends DAO<ProveedorDTO> {
         }
         String query = "CALL ProveedoresDelete(?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, (Integer) id); 
+            stmt.setInt(1, (Integer) id);
             return stmt.executeUpdate() > 0;
         }
     }

@@ -56,6 +56,7 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
         tblClient = new javax.swing.JTable();
         lblCant = new javax.swing.JLabel();
         txtCant = new javax.swing.JTextField();
+        lblNotaClient = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Gestión de Clientes");
@@ -255,6 +256,10 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
             }
         });
 
+        lblNotaClient.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNotaClient.setForeground(new java.awt.Color(255, 255, 255));
+        lblNotaClient.setText("Nota: La cédula y el nombre NO son editables.");
+
         javax.swing.GroupLayout pnlDatosLayout = new javax.swing.GroupLayout(pnlDatos);
         pnlDatos.setLayout(pnlDatosLayout);
         pnlDatosLayout.setHorizontalGroup(
@@ -267,6 +272,8 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
                         .addComponent(lblCant)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblNotaClient)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlDatosLayout.createSequentialGroup()
                         .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -327,7 +334,8 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
                 .addGap(15, 15, 15)
                 .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCant)
-                    .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNotaClient))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -354,6 +362,9 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
         txtTelefono.setText("");
         txtEmail.setText("");
         txtCedula.requestFocus();
+        lblNotaClient.setVisible(false);
+        txtCedula.setEditable(true);
+        txtNombreCompl.setEditable(true);
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
 
@@ -387,8 +398,6 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
             clienteController.create(cliente);
             clienteController.readAll();
             btnLimpiarActionPerformed(null);
-
-            JOptionPane.showMessageDialog(this, "Cliente agregado exitosamente.", "Operación exitosa", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (Exception e) {
             showError("Error al agregar cliente: " + e.getMessage());
@@ -440,7 +449,9 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
             txtDireccion.setText(String.valueOf(tblClient.getValueAt(row, 2)));
             txtTelefono.setText(String.valueOf(tblClient.getValueAt(row, 3)));
             txtEmail.setText(String.valueOf(tblClient.getValueAt(row, 4)));
-
+            lblNotaClient.setVisible(true);
+            txtCedula.setEditable(false);
+            txtNombreCompl.setEditable(false);
         }
     }//GEN-LAST:event_tblClientMousePressed
 
@@ -460,10 +471,10 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
             if (opcion == JOptionPane.YES_OPTION) {
                 clienteController.deleteByCedula(cedulaCliente);
                 clienteController.readAll();
-                JOptionPane.showMessageDialog(this, "Cliente eliminado correctamente.", "Eliminación exitosa", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(this, "Eliminación cancelada.", "Operación cancelada", JOptionPane.INFORMATION_MESSAGE);
+                return;
             }
+
         } else {
             JOptionPane.showMessageDialog(this, "Se debe seleccionar 1 registro para eliminar.", "Error de selección", JOptionPane.ERROR_MESSAGE);
         }
@@ -475,7 +486,10 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
             int fila = tblClient.getSelectedRow();
 
             String cedula = txtCedula.getText().trim();
+            String nombre = txtNombreCompl.getText().trim();
+            String direccion = txtDireccion.getText().trim();
             String telefono = txtTelefono.getText().trim();
+            String email = txtEmail.getText().trim();
 
             if (!cedula.matches("\\d+")) {
                 JOptionPane.showMessageDialog(this, "La cédula debe contener solo números.", "Error de validación", JOptionPane.ERROR_MESSAGE);
@@ -489,9 +503,23 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
                 return;
             }
 
-            if (!txtNombreCompl.getText().isEmpty() && !cedula.isEmpty() && !telefono.isEmpty()) {
-                cliente = new Cliente(cedula, txtNombreCompl.getText(),
-                        txtDireccion.getText(), telefono, txtEmail.getText());
+            // Comparar datos actuales con los que hay en la tabla
+            String cedulaTabla = String.valueOf(tblClient.getValueAt(fila, 0));
+            String nombreTabla = String.valueOf(tblClient.getValueAt(fila, 1));
+            String direccionTabla = String.valueOf(tblClient.getValueAt(fila, 2));
+            String telefonoTabla = String.valueOf(tblClient.getValueAt(fila, 3));
+            String correoTabla = String.valueOf(tblClient.getValueAt(fila, 4));
+
+            if (direccion.equals(direccionTabla)
+                    && telefono.equals(telefonoTabla)
+                    && email.equals(correoTabla)) {
+
+                JOptionPane.showMessageDialog(this, "No se realizaron cambios. Los datos son los mismos.", "Sin cambios", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            if (!nombre.isEmpty() && !cedula.isEmpty() && !telefono.isEmpty()) {
+                cliente = new Cliente(cedula, nombre, direccion, telefono, email);
                 clienteController.update(cliente);
                 clienteController.readAll();
                 btnLimpiarActionPerformed(null);
@@ -502,7 +530,7 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
             JOptionPane.showMessageDialog(this, "Se debe seleccionar 1 registro.");
         }
     }//GEN-LAST:event_btnEditarActionPerformed
-    
+
     @Override
     public void show(Cliente ent) {
         txtCedula.setText(cliente.getCedula());
@@ -541,14 +569,9 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
         return !txtCedula.getText().isEmpty() && !txtNombreCompl.getText().isEmpty();
 
     }
-    
-    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-//        if (pani <= 0) {
-//            for (Puestos p : listaP) {
-//                cmbPuesto.addItem(Integer.toString(p.getIdPuesto()));
-//            }
-//        }
 
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        lblNotaClient.setVisible(false);
     }//GEN-LAST:event_formWindowActivated
 
     private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
@@ -883,6 +906,7 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
     private javax.swing.JLabel lblDireccion;
     private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblNombreC;
+    private javax.swing.JLabel lblNotaClient;
     private javax.swing.JLabel lblTelefono;
     private javax.swing.JPanel pnlDatos;
     private javax.swing.JTable tblClient;
@@ -900,5 +924,4 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-   
 }

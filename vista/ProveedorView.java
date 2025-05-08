@@ -56,6 +56,7 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
         lblCant = new javax.swing.JLabel();
         txtCant = new javax.swing.JTextField();
         txtId = new javax.swing.JTextField();
+        lblNota = new javax.swing.JLabel();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -78,6 +79,11 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
 
         pnlDatos.setBackground(new java.awt.Color(0, 51, 102));
         pnlDatos.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Datos de Proveedores", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 18), new java.awt.Color(255, 255, 255))); // NOI18N
+        pnlDatos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                pnlDatosMousePressed(evt);
+            }
+        });
 
         lblNombreC.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblNombreC.setForeground(new java.awt.Color(255, 255, 255));
@@ -238,6 +244,10 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
 
         txtId.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
+        lblNota.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNota.setForeground(new java.awt.Color(255, 255, 255));
+        lblNota.setText("Nota: El Id del proveedor NO es editable.");
+
         javax.swing.GroupLayout pnlDatosLayout = new javax.swing.GroupLayout(pnlDatos);
         pnlDatos.setLayout(pnlDatosLayout);
         pnlDatosLayout.setHorizontalGroup(
@@ -272,6 +282,8 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
                 .addComponent(lblCant)
                 .addGap(18, 18, 18)
                 .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lblNota)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlDatosLayout.setVerticalGroup(
@@ -305,7 +317,8 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCant)
-                    .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNota))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -326,11 +339,13 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
-
+        txtId.setText("");
         txtNombre.setText("");
         txtContacto.setText("");
         txtDireccion.setText("");
         txtId.requestFocus();
+        lblNota.setVisible(false);
+        txtId.setEditable(false);
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
 
@@ -379,26 +394,26 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
                 }
             }
         }
-        
+
         tblProveedor.setModel(model);
 
     }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void tblProveedorMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProveedorMousePressed
         if (evt.getClickCount() == 1) {
-            int row = tblProveedor.getSelectedRow(); 
+            int row = tblProveedor.getSelectedRow();
+            txtId.setText(String.valueOf(tblProveedor.getValueAt(row, 0)));
             txtNombre.setText(String.valueOf(tblProveedor.getValueAt(row, 1)));
             txtContacto.setText(String.valueOf(tblProveedor.getValueAt(row, 2)));
             txtDireccion.setText(String.valueOf(tblProveedor.getValueAt(row, 3)));
-
+            lblNota.setVisible(true);
+            txtId.setEditable(false);
         }
 
 
     }//GEN-LAST:event_tblProveedorMousePressed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-//        Controlador.delete(proveedor);
-//        Controlador.readAll();
         int row = tblProveedor.getSelectedRow();
         if (row != -1) {
             int id = (int) tblProveedor.getValueAt(row, 0);
@@ -415,28 +430,41 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
         if (tblProveedor.getSelectedRowCount() == 1) {
             int fila = tblProveedor.getSelectedRow();
 
-            if (!txtNombre.getText().isEmpty()) {
-                int row = tblProveedor.getSelectedRow();
-                proveedor = new Proveedor(Integer.parseInt(String.valueOf(tblProveedor.getValueAt(row, 0))), txtContacto.getText());
-                Controlador.update(proveedor);
-                Controlador.readAll();
+            // Nuevos valores del formulario
+            String nombre = txtNombre.getText().trim();
+            String contacto = txtContacto.getText().trim();
+            String direccion = txtDireccion.getText().trim();
 
-                btnLimpiarActionPerformed(null);
-            } else {
-                JOptionPane.showMessageDialog(this, "Los campos no pueden estar vacíos");
+            // Valores actuales desde la tabla
+            String nombreTabla = tblProveedor.getValueAt(fila, 1).toString();
+            String contactoTabla = tblProveedor.getValueAt(fila, 2).toString();
+            String direccionTabla = tblProveedor.getValueAt(fila, 3).toString();
+
+            // Validación: verificar si hay cambios
+            if (nombre.equals(nombreTabla) && contacto.equals(contactoTabla) && direccion.equals(direccionTabla)) {
+                JOptionPane.showMessageDialog(this, "No se realizaron cambios. Los datos son los mismos.", "Sin cambios", JOptionPane.INFORMATION_MESSAGE);
+                return;
             }
+
+            // Validación de campos vacíos
+            if (nombre.isEmpty() || contacto.isEmpty() || direccion.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Los campos no pueden estar vacíos");
+                return;
+            }
+
+            // Ejecutar actualización
+            int id = Integer.parseInt(tblProveedor.getValueAt(fila, 0).toString());
+            proveedor = new Proveedor(id, nombre, contacto, direccion);
+            Controlador.update(proveedor);
+            Controlador.readAll();
+            btnLimpiarActionPerformed(null);
         } else {
-            JOptionPane.showMessageDialog(this, "Se debe seleccionar 1 registro");
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un registro para editar.");
         }
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
-//        if (pani <= 0) {
-//            for (Puestos p : listaP) {
-//                cmbPuesto.addItem(Integer.toString(p.getIdPuesto()));
-//            }
-//        }
-
+        lblNota.setVisible(false);
     }//GEN-LAST:event_formWindowActivated
 
     private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
@@ -446,6 +474,10 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
     private void txtCantActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCantActionPerformed
+
+    private void pnlDatosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlDatosMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pnlDatosMousePressed
 
     public JTable getTblColaborador() {
         return tblProveedor;
@@ -511,6 +543,7 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
     private javax.swing.JLabel lblCant;
     private javax.swing.JLabel lblDireccion;
     private javax.swing.JLabel lblNombreC;
+    private javax.swing.JLabel lblNota;
     private javax.swing.JLabel lblTelefono;
     private javax.swing.JPanel pnlDatos;
     private javax.swing.JTable tblProveedor;
