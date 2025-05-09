@@ -1,12 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package vista;
 
 import Modelo.Clientes.Cliente;
 import Modelo.Producto.Productos;
-import Modelo.Proveedores.Proveedor;
+import Modelo.Ventas.Ventas;
+import Modelo.Vista.Vista;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -16,39 +13,26 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
 import controlador.ClienteControlador;
-import controlador.ProductosControlador;
+import controlador.VentasControlador;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author chrisp
- */
-public class VentasView extends javax.swing.JDialog {
+public class VentasView extends javax.swing.JDialog implements Vista<Ventas> {
 
-    private Modelo.Ventas.Ventas ventas;
-    private Productos productos;
-    private Cliente cliente;
-    private ArrayList<Cliente> listaPliente;
-    private ArrayList<Modelo.Ventas.Ventas> listaVentas;
-    private ArrayList<Productos> listaP;
-    private ClienteControlador clienteController;
+    private VentasControlador controlador;
+    private List<Ventas> listaVentas = new ArrayList<>();
     private DefaultTableModel model;
 
     public VentasView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-
-        clienteController = new ClienteControlador(new ClientesView());
-        ProductosControlador productosController = new ProductosControlador(new ProductosView(null, true));
-        listaP = new ArrayList<>(productosController.readAll());
-        listaPliente = new ArrayList<>();
-        listaVentas = new ArrayList<>();
-        listaP = new ArrayList<>();
         setLocationRelativeTo(null);
+        controlador = new VentasControlador(this);
+        controlador.readAll();
     }
 
     /**
@@ -75,11 +59,11 @@ public class VentasView extends javax.swing.JDialog {
         bntBuscarCliente = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         txtNombreCliente = new javax.swing.JTextField();
-        txtCedCliente = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         btnPDFTodo = new javax.swing.JButton();
         btnEliminarInforme = new javax.swing.JButton();
+        txtCedCliente = new javax.swing.JTextField();
         pnlRegistrosPlanilla = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPlanilla = new javax.swing.JTable();
@@ -88,7 +72,7 @@ public class VentasView extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Gestión de Ventas ");
-        setPreferredSize(new java.awt.Dimension(1000, 650));
+        setPreferredSize(new java.awt.Dimension(925, 538));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 formWindowActivated(evt);
@@ -171,9 +155,6 @@ public class VentasView extends javax.swing.JDialog {
         txtNombreCliente.setEditable(false);
         txtNombreCliente.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        txtCedCliente.setEditable(false);
-        txtCedCliente.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Cédula:");
@@ -202,105 +183,101 @@ public class VentasView extends javax.swing.JDialog {
             }
         });
 
+        txtCedCliente.setEditable(false);
+        txtCedCliente.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout pnlGenerarLayout = new javax.swing.GroupLayout(pnlGenerar);
         pnlGenerar.setLayout(pnlGenerarLayout);
         pnlGenerarLayout.setHorizontalGroup(
             pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlGenerarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(pnlGenerarLayout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtCantVendida))
-                    .addGroup(pnlGenerarLayout.createSequentialGroup()
-                        .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel6))
-                        .addGap(27, 27, 27)
-                        .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCedCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
-                            .addComponent(txtCodigo))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlGenerarLayout.createSequentialGroup()
-                                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(pnlGenerarLayout.createSequentialGroup()
-                                        .addComponent(jLabel4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnbucarProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(pnlGenerarLayout.createSequentialGroup()
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(bntBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(txtNombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlGenerarLayout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(btnPDFTodo, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnGenerar, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(160, 160, 160))
                     .addGroup(pnlGenerarLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtCantVendida)
+                            .addComponent(txtCodigo, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGenerarLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(txtCedCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(29, 29, 29)
                         .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnGenerar, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(pnlGenerarLayout.createSequentialGroup()
-                                .addComponent(btnEliminarInforme, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(6, 6, 6)))))
-                .addContainerGap(18, Short.MAX_VALUE))
+                                .addComponent(btnPDFTodo, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(164, 164, 164)
+                                .addComponent(btnEliminarInforme, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGenerarLayout.createSequentialGroup()
+                                .addComponent(txtNombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(bntBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGenerarLayout.createSequentialGroup()
+                                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3))
+                                .addGap(15, 15, 15)
+                                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pnlGenerarLayout.createSequentialGroup()
+                                        .addGap(35, 35, 35)
+                                        .addComponent(jLabel4))
+                                    .addGroup(pnlGenerarLayout.createSequentialGroup()
+                                        .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(35, 35, 35)
+                                        .addComponent(btnbucarProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(14, 14, 14))))
         );
         pnlGenerarLayout.setVerticalGroup(
             pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlGenerarLayout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addGap(9, 9, 9)
+                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(txtCedCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bntBuscarCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
+                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnbucarProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnPDFTodo, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlGenerarLayout.createSequentialGroup()
-                        .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlGenerarLayout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addGap(14, 14, 14)
-                                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(txtCedCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel6))
-                                .addGap(53, 53, 53)
-                                .addComponent(jLabel1))
-                            .addGroup(pnlGenerarLayout.createSequentialGroup()
-                                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel8)
-                                    .addComponent(bntBuscarCliente))
-                                .addGap(14, 14, 14)
-                                .addComponent(txtNombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(pnlGenerarLayout.createSequentialGroup()
-                                        .addGap(2, 2, 2)
-                                        .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(btnEliminarInforme, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                .addComponent(jLabel2)
-                                                .addComponent(jLabel3)
-                                                .addComponent(jLabel4))))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGenerarLayout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btnbucarProducto)))
-                                .addGap(18, 18, 18)
-                                .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(btnGenerar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGap(31, 31, 31)
+                        .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnGenerar, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnEliminarInforme, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnPDFTodo, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlGenerarLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(pnlGenerarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
-                            .addComponent(txtCantVendida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(44, Short.MAX_VALUE))
+                            .addComponent(txtCantVendida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(1, 1, 1)))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pnlRegistrosPlanilla.setBackground(new java.awt.Color(0, 51, 102));
@@ -314,6 +291,11 @@ public class VentasView extends javax.swing.JDialog {
 
             }
         ));
+        tblPlanilla.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblPlanillaMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblPlanilla);
 
         javax.swing.GroupLayout pnlRegistrosPlanillaLayout = new javax.swing.GroupLayout(pnlRegistrosPlanilla);
@@ -339,10 +321,10 @@ public class VentasView extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblCant)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(pnlRegistrosPlanilla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(pnlGenerar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(pnlRegistrosPlanilla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnlGenerar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -350,15 +332,86 @@ public class VentasView extends javax.swing.JDialog {
                 .addComponent(pnlGenerar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlRegistrosPlanilla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCant)
                     .addComponent(txtCant, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(54, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    @Override
+    public void show(Ventas venta) {
+        JOptionPane.showMessageDialog(this, "Venta registrada: " + venta.getIdPlanilla());
+    }
+
+    @Override
+    public void showAll(List<Ventas> ventas) {
+        listaVentas = ventas;
+        String[] titulos = {"Id Planilla", "Fecha Creación", "Cedula Cliente", "Cliente", "Código Producto", "Producto",
+            "Precio Unidad", "Cantidad Vendida", "Subtotal", "Impuestos", "Total"};
+        model = new DefaultTableModel(null, titulos);
+
+        for (Ventas v : ventas) {
+            Object[] fila = {
+                v.getIdPlanilla(),
+                v.getFechaRecibo(),
+                v.getCedulaEmpleado(),
+                v.getNomEmpleado(),
+                v.getCodigoProducto(),
+                v.getNombreProducto(),
+                v.getPrecioProducto(),
+                v.getCantVendidos(),
+                calcularSubTotal(v),
+                calcularImpuestos(v),
+                calcularTotal(v)
+            };
+            model.addRow(fila);
+        }
+
+        tblPlanilla.setModel(model);
+        txtCant.setText(String.valueOf(model.getRowCount()));
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg);
+    }
+
+    @Override
+    public void showError(String err) {
+        JOptionPane.showMessageDialog(this, err, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    @Override
+    public void showWarnig(String warning) {
+        JOptionPane.showMessageDialog(this, warning, "Advertencia", JOptionPane.WARNING_MESSAGE);
+    }
+
+    @Override
+    public boolean validateRequired() {
+        return !txtCedCliente.getText().trim().isEmpty()
+                && !txtNombreCliente.getText().trim().isEmpty()
+                && !txtCodigo.getText().trim().isEmpty()
+                && !txtNombre.getText().trim().isEmpty()
+                && !txtPrecio.getText().trim().isEmpty()
+                && !txtCantVendida.getText().trim().isEmpty();
+    }
+
+    private int calcularSubTotal(Ventas v) {
+        return v.getPrecioProducto() * v.getCantVendidos();
+    }
+
+    private int calcularImpuestos(Ventas v) {
+        return (int) (0.13 * calcularSubTotal(v));
+    }
+
+    private int calcularTotal(Ventas v) {
+        return calcularSubTotal(v) + calcularImpuestos(v);
+    }
+
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
 //        if (!listaPlanilla.isEmpty()) {
@@ -371,54 +424,28 @@ public class VentasView extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowActivated
 
     private void btnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarActionPerformed
-         if (txtCodigo.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Selecciona un producto para realizar la venta", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        if (txtCedCliente.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Selecciona un cliente para realizar la venta", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        if (txtCantVendida.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Debe ingresar la cantidad vendida", "Error", JOptionPane.ERROR_MESSAGE);
+        if (!validateRequired()) {
+            showError("Todos los campos son obligatorios.");
             return;
         }
 
         try {
-            int cantidadVendida = Integer.parseInt(txtCantVendida.getText());
+            Ventas venta = new Ventas();
+            venta.setFechaRecibo(LocalDate.now());
+            venta.setCedulaEmpleado(Integer.parseInt(txtCedCliente.getText()));
+            venta.setNomEmpleado(txtNombreCliente.getText());
+            venta.setCodigoProducto(Integer.parseInt(txtCodigo.getText()));
+            venta.setNombreProducto(txtNombre.getText());
+            venta.setPrecioProducto((int) Double.parseDouble(txtPrecio.getText()));
+            venta.setCantVendidos(Integer.parseInt(txtCantVendida.getText()));
+            venta.setSubTotal(calcularSubTotal(venta));
+            venta.setImpuestos(calcularImpuestos(venta));
+            venta.setTotal(calcularTotal(venta));
 
-            Productos productoSeleccionado = listaP.stream()
-                    .filter(p -> p.getCodigo() == Integer.parseInt(txtCodigo.getText()))
-                    .findFirst()
-                    .orElse(null);
-
-            if (productoSeleccionado == null) {
-                JOptionPane.showMessageDialog(this, "Producto no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (cantidadVendida > productoSeleccionado.getCantDisponible()) {
-                JOptionPane.showMessageDialog(this, "No hay suficiente stock disponible", "Stock Insuficiente", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            productoSeleccionado.setCantDisponible(productoSeleccionado.getCantDisponible() - cantidadVendida);
-
-            Modelo.Ventas.Ventas nuevaVenta = new Modelo.Ventas.Ventas();
-            nuevaVenta.setCedulaEmpleado(Integer.parseInt(txtCedCliente.getText()));
-            nuevaVenta.setNomEmpleado(txtNombreCliente.getText());
-            nuevaVenta.setCodigoProducto(Integer.parseInt(txtCodigo.getText()));
-            nuevaVenta.setNombreProducto(txtNombre.getText());
-            nuevaVenta.setPrecioProducto(Integer.parseInt(txtPrecio.getText()));
-            nuevaVenta.setCantVendidos(cantidadVendida);
-
-            listaVentas.add(nuevaVenta);
-            mostrarTabla();
+            controlador.create(venta);
 
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "La cantidad vendida debe ser un número válido", "Error", JOptionPane.ERROR_MESSAGE);
+            showError("Revisa que los campos numéricos sean válidos.");
         }
 
         btnPDFTodo.setVisible(true);
@@ -426,20 +453,13 @@ public class VentasView extends javax.swing.JDialog {
 
 
     private void btnbucarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnbucarProductoActionPerformed
-        // Crear la vista de búsqueda de productos
         ProductosBuscaView view = new ProductosBuscaView(null, true);
-
-        // Mostrar la vista
         view.setVisible(true);
-
-        // Obtener el producto seleccionado
-        Productos productoSeleccionado = view.getProductoSeleccionado();
-
-        if (productoSeleccionado != null) {
-            // Setear los valores en los campos de texto
-            txtCodigo.setText(String.valueOf(productoSeleccionado.getCodigo()));
-            txtNombre.setText(productoSeleccionado.getNombre());
-            txtPrecio.setText(String.valueOf(productoSeleccionado.getPrecio()));
+        Productos producto = view.getProductoSeleccionado();
+        if (producto != null) {
+            txtCodigo.setText(String.valueOf(producto.getCodigo()));
+            txtNombre.setText(producto.getNombre());
+            txtPrecio.setText(String.valueOf(producto.getPrecio()));
         }
     }//GEN-LAST:event_btnbucarProductoActionPerformed
 
@@ -448,22 +468,21 @@ public class VentasView extends javax.swing.JDialog {
     }//GEN-LAST:event_txtNombreActionPerformed
 
     private void btnEliminarInformeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarInformeActionPerformed
-       if (listaVentas.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No hay registros para eliminar", "Lista Vacía", JOptionPane.INFORMATION_MESSAGE);
+        if (listaVentas.isEmpty()) {
+            showMessage("No hay registros para eliminar");
             return;
         }
 
         int filaSeleccionada = tblPlanilla.getSelectedRow();
         if (filaSeleccionada == -1) {
-            JOptionPane.showMessageDialog(this, "Debe seleccionar un registro para eliminar", "Selección Requerida", JOptionPane.WARNING_MESSAGE);
+            showWarnig("Debe seleccionar un registro para eliminar");
             return;
         }
 
         int confirm = JOptionPane.showConfirmDialog(this, "¿Está seguro de eliminar el registro seleccionado?", "Confirmar Eliminación", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            listaVentas.remove(filaSeleccionada);
-            mostrarTabla();
-            JOptionPane.showMessageDialog(this, "Registro eliminado exitosamente", "Eliminación Exitosa", JOptionPane.INFORMATION_MESSAGE);
+            Ventas ventaSeleccionada = listaVentas.get(filaSeleccionada);
+            controlador.delete(ventaSeleccionada);
         }
     }//GEN-LAST:event_btnEliminarInformeActionPerformed
 
@@ -493,37 +512,25 @@ public class VentasView extends javax.swing.JDialog {
                     .setMarginBottom(20));
 
             int columnCount = model.getColumnCount();
-            float totalWidth = 520f; // Ancho total de la tabla en puntos
             float[] columnWidths = new float[columnCount];
-            float defaultWidth = totalWidth / columnCount;
-
             for (int i = 0; i < columnCount; i++) {
-                columnWidths[i] = Math.max(defaultWidth, model.getColumnName(i).length() * 6f); // Ajuste basado en texto
+                columnWidths[i] = 100f;
             }
-
             Table pdfTable = new Table(columnWidths);
-            pdfTable.setWidth(totalWidth);
-
             for (int i = 0; i < columnCount; i++) {
-                Cell headerCell = new Cell().add(new Paragraph(model.getColumnName(i)))
+                pdfTable.addHeaderCell(new Cell().add(new Paragraph(model.getColumnName(i)))
                         .setBold()
                         .setTextAlignment(TextAlignment.CENTER)
-                        .setBackgroundColor(ColorConstants.LIGHT_GRAY);
-                pdfTable.addHeaderCell(headerCell);
+                        .setBackgroundColor(ColorConstants.LIGHT_GRAY));
             }
 
             for (int i = 0; i < model.getRowCount(); i++) {
                 for (int j = 0; j < columnCount; j++) {
-                    String cellData = model.getValueAt(i, j) == null ? "" : model.getValueAt(i, j).toString();
-                    Cell cell = new Cell().add(new Paragraph(cellData)
-                            .setTextAlignment(TextAlignment.LEFT)
-                            .setFontSize(10));
-                    pdfTable.addCell(cell);
+                    pdfTable.addCell(new Cell().add(new Paragraph(model.getValueAt(i, j).toString())));
                 }
             }
 
             document.add(pdfTable);
-
             document.close();
 
             JOptionPane.showMessageDialog(this, "PDF generado exitosamente en: " + rutaCompleta);
@@ -535,56 +542,29 @@ public class VentasView extends javax.swing.JDialog {
     }//GEN-LAST:event_btnPDFTodoActionPerformed
 
     private void bntBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntBuscarClienteActionPerformed
-      ClienteBuscaView view = new ClienteBuscaView(null, true);
-
+        ClienteBuscaView view = new ClienteBuscaView(null, true);
         view.setVisible(true);
-
-        Cliente clienteSeleccionado = view.getClienteSeleccionado();
-
-        if (clienteSeleccionado != null) {
-            txtCedCliente.setText(clienteSeleccionado.getCedula());
-            txtNombreCliente.setText(clienteSeleccionado.getNombreCompleto());
+        Cliente cliente = view.getClienteSeleccionado();
+        if (cliente != null) {
+            txtCedCliente.setText(cliente.getCedula());
+            txtNombreCliente.setText(cliente.getNombreCompleto());
         }
 
     }//GEN-LAST:event_bntBuscarClienteActionPerformed
 
-    public void mostrarTabla() {
-        String[] titulos = {"Id Planilla", "Fecha Creación", "Cedula Cliente", "Cliente", "Código Producto", "Producto",
-            "Precio Unidad", "Cantidad Vendida", "Subtotal", "Impuestos", "Total"};
-        model = new DefaultTableModel(null, titulos);
-
-        for (Modelo.Ventas.Ventas venta : listaVentas) {
-            Object[] fila = {
-                venta.getIdPlanilla(),
-                venta.getFechaRecibo(),
-                venta.getCedulaEmpleado(),
-                venta.getNomEmpleado(),
-                venta.getCodigoProducto(),
-                venta.getNombreProducto(),
-                venta.getPrecioProducto(),
-                venta.getCantVendidos(),
-                calcularSubTotal(venta),
-                calcularImpuestos(venta),
-                calcularTotal(venta)
-            };
-            model.addRow(fila);
+    private void tblPlanillaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPlanillaMousePressed
+        if (evt.getClickCount() == 1) {
+            int row = tblPlanilla.getSelectedRow();
+            if (row != -1) {
+                txtCedCliente.setText(String.valueOf(tblPlanilla.getValueAt(row, 2))); // Cedula Cliente
+                txtNombreCliente.setText(String.valueOf(tblPlanilla.getValueAt(row, 3))); // Nombre Cliente
+                txtCodigo.setText(String.valueOf(tblPlanilla.getValueAt(row, 4))); // Código Producto
+                txtNombre.setText(String.valueOf(tblPlanilla.getValueAt(row, 5))); // Nombre Producto
+                txtPrecio.setText(String.valueOf(tblPlanilla.getValueAt(row, 6))); // Precio Producto
+                txtCantVendida.setText(String.valueOf(tblPlanilla.getValueAt(row, 7))); // Cantidad Vendida
+            }
         }
-
-        tblPlanilla.setModel(model);
-        txtCant.setText(String.valueOf(model.getRowCount()));
-    }
-
-     public int calcularSubTotal(Modelo.Ventas.Ventas venta) {
-        return venta.getPrecioProducto() * venta.getCantVendidos();
-    }
-
-    public int calcularImpuestos(Modelo.Ventas.Ventas venta) {
-        return (int) (0.13 * calcularSubTotal(venta));
-    }
-
-    public int calcularTotal(Modelo.Ventas.Ventas venta) {
-        return calcularSubTotal(venta) + calcularImpuestos(venta);
-    }
+    }//GEN-LAST:event_tblPlanillaMousePressed
 
     public void PDFVision() {
         btnPDFTodo.setVisible(false);

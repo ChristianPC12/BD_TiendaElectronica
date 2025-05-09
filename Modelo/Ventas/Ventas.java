@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class Ventas {
 
     // Variable estática para gestionar el incremento automático del ID de planilla
-    private int idIncremento = 1; // Cambiado para empezar en 1
+    //private int idIncremento = 1; // Cambiado para empezar en 1
 
     // Atributos de la clase Ventas
     private int idPlanilla;
@@ -20,9 +20,9 @@ public class Ventas {
     private int impuestos;
     private int total;
 
-    public Ventas(String fechaPago, int cedulaEmpleado, String nomEmpleado, int codigoProducto, String nombreProducto,
+    public Ventas(int IdPlanilla,String fechaPago, int cedulaEmpleado, String nomEmpleado, int codigoProducto, String nombreProducto,
             int precioProducto, int cantVendidos, int subTotal, int impuestos, int total) {
-        this.idPlanilla = idIncremento++;
+        this.idPlanilla = IdPlanilla;
         this.cedulaEmpleado = 0;
         this.nomEmpleado = "pronto";
         this.codigoProducto = codigoProducto;
@@ -39,7 +39,7 @@ public class Ventas {
      * predeterminados.
      */
     public Ventas() {
-        this.idPlanilla = idIncremento++;
+        this.idPlanilla = 0;
         this.fechaRecibo = LocalDate.now();
         this.cedulaEmpleado = 0;
         this.nomEmpleado = "pronto";
@@ -62,9 +62,9 @@ public class Ventas {
         return idPlanilla;
     }
 
-    public int getIdIncremento() {
-        return idIncremento;
-    }
+    //public int getIdIncremento() {
+//        return idIncremento;
+//    }
 
     /**
      * Establece el ID de la planilla.

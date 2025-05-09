@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author Christian y Reyman
+ * @author Christian Paniagua Castro 
  */
 public class ClienteBuscaView extends javax.swing.JDialog {
 
