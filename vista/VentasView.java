@@ -13,6 +13,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.property.TextAlignment;
 import controlador.ClienteControlador;
+import controlador.ProductosControlador;
 import controlador.VentasControlador;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class VentasView extends javax.swing.JDialog implements Vista<Ventas> {
 
+    private ProductosControlador productosControlador;
     private VentasControlador controlador;
     private List<Ventas> listaVentas = new ArrayList<>();
     private DefaultTableModel model;
@@ -32,6 +34,7 @@ public class VentasView extends javax.swing.JDialog implements Vista<Ventas> {
         initComponents();
         setLocationRelativeTo(null);
         controlador = new VentasControlador(this);
+        productosControlador = new ProductosControlador(new ProductosView(null, true));
         controlador.readAll();
     }
 
@@ -430,25 +433,44 @@ public class VentasView extends javax.swing.JDialog implements Vista<Ventas> {
         }
 
         try {
+            int codigo = Integer.parseInt(txtCodigo.getText());
+            int cantidad = Integer.parseInt(txtCantVendida.getText());
+            String nombreProducto = txtNombre.getText();
+
             Ventas venta = new Ventas();
             venta.setFechaRecibo(LocalDate.now());
             venta.setCedulaEmpleado(Integer.parseInt(txtCedCliente.getText()));
             venta.setNomEmpleado(txtNombreCliente.getText());
-            venta.setCodigoProducto(Integer.parseInt(txtCodigo.getText()));
-            venta.setNombreProducto(txtNombre.getText());
+            venta.setCodigoProducto(codigo);
+            venta.setNombreProducto(nombreProducto);
             venta.setPrecioProducto((int) Double.parseDouble(txtPrecio.getText()));
-            venta.setCantVendidos(Integer.parseInt(txtCantVendida.getText()));
+            venta.setCantVendidos(cantidad);
             venta.setSubTotal(calcularSubTotal(venta));
             venta.setImpuestos(calcularImpuestos(venta));
             venta.setTotal(calcularTotal(venta));
 
+            Productos producto = productosControlador.readAll().stream()
+                    .filter(p -> p.getCodigo() == codigo)
+                    .findFirst().orElse(null);
+
+            // Validar existencia
+            if (producto == null) {
+                showError("Producto no encontrado.");
+                return;
+            }
+
+            if (cantidad > producto.getCantDisponible()) {
+                showError("No hay suficiente stock disponible para este producto.");
+                return;
+            }
             controlador.create(venta);
+            productosControlador.descontarStock(codigo, cantidad, this);
 
         } catch (NumberFormatException e) {
             showError("Revisa que los campos numéricos sean válidos.");
         }
-
         btnPDFTodo.setVisible(true);
+
     }//GEN-LAST:event_btnGenerarActionPerformed
 
 
@@ -565,6 +587,14 @@ public class VentasView extends javax.swing.JDialog implements Vista<Ventas> {
             }
         }
     }//GEN-LAST:event_tblPlanillaMousePressed
+
+    public void EvaluarCantidadEdit(int nuevaCantidad, String nombreProducto) {
+        if (nuevaCantidad >= 1 && nuevaCantidad < 15) {
+            showWarnig("El producto " + nombreProducto + " está cerca de agotarse. \nEvalúa un reabastecimiento pronto.");
+        } else if (nuevaCantidad == 0) {
+            showWarnig("El producto " + nombreProducto + " ha sido agotado. \nEs necesario realizar un reabastecimiento inmediato.");
+        }
+    }
 
     public void PDFVision() {
         btnPDFTodo.setVisible(false);

@@ -9,6 +9,8 @@ import Modelo.Proveedores.Proveedor;
 import Modelo.Proveedores.ProveedorDAO;
 import Modelo.Proveedores.ProveedorDTO;
 import Modelo.Vista.Vista;
+import vista.VentasView;
+
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,7 +26,6 @@ public class ProductosControlador {
     private final Vista<Productos> vista;
     private final ProductosMapper mapper;
     private final ProveedorDAO proveedorDAO;
-    
 
     // Constructor completo
     public ProductosControlador(Vista<Productos> vista, ProductosMapper mapper, ProveedorDAO proveedorDAO) {
@@ -104,7 +105,6 @@ public class ProductosControlador {
             return new ArrayList<>();  // Devuelve una lista vacía en caso de error
         }
     }
-
 
     // Actualizar un producto
     public void update(Productos producto) {
@@ -190,4 +190,25 @@ public class ProductosControlador {
             return false;
         }
     }
+
+    public void descontarStock(int codigoProducto, int cantidadVendida, Vista<?> vista) {
+        try {
+            Productos producto = readAll().stream()
+                    .filter(p -> p.getCodigo() == codigoProducto)
+                    .findFirst().orElse(null);
+
+            if (producto != null) {
+                int nuevaCantidad = producto.getCantDisponible() - cantidadVendida;
+                producto.setCantDisponible(nuevaCantidad);
+                update(producto);
+
+                if (vista instanceof VentasView ventasView) {
+                    ventasView.EvaluarCantidadEdit(nuevaCantidad, producto.getNombre());
+                }
+            }
+        } catch (Exception e) {
+            vista.showError("Error al actualizar stock: " + e.getMessage());
+        }
+    }
+
 }
