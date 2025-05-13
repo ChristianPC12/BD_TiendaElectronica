@@ -28,7 +28,7 @@ public class LoginView extends javax.swing.JFrame {
 
    public void validar() {
     String nombre = txtNombre.getText();
-    String pass = String.valueOf(txtPass.getText());
+String pass = new String(txtPass.getPassword());
 
     if (!"".equals(nombre) && !"".equals(pass)) {
         lg = login.log(nombre, pass);
@@ -40,6 +40,9 @@ public class LoginView extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Nombre o contraseña incorrectas");
         }
+        System.out.println("Usuario digitado: " + nombre);
+System.out.println("Contraseña digitada: " + pass);
+
     }
 }
 

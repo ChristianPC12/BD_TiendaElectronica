@@ -19,24 +19,29 @@ public class LoginDAO {
      * Valida usuario y contraseña.
      */
     public Login log(String nombre, String pass) {
-        Login l = new Login();
-        String sql = "SELECT * FROM usuarios WHERE nombre = ? AND pass = ?";
-        try {
-            con = DataBase.getConnection();
-            ps = con.prepareStatement(sql);
+        Login l = null; // ⬅️ Evita devolver un objeto vacío
+        String sql = "SELECT * FROM usuarios WHERE Nombre = ? AND Pass = ?";
+
+        try (Connection con = DataBase.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setString(1, nombre);
             ps.setString(2, pass);
-            rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
+
             if (rs.next()) {
-                l.setId(rs.getInt("id"));
-                l.setNombre(rs.getString("nombre"));
-                l.setCorreo(rs.getString("correo"));
-                l.setPass(rs.getString("pass"));
-                l.setRol(rs.getString("rol")); // ✅ Rol cargado
+                l = new Login();
+                l.setId(rs.getInt("Id"));
+                l.setNombre(rs.getString("Nombre"));
+                l.setCorreo(rs.getString("Correo"));
+                l.setPass(rs.getString("Pass"));
+                l.setRol(rs.getString("rol"));
             }
+
         } catch (SQLException e) {
-            System.out.println(e.toString());
+            System.out.println("Error en login: " + e.getMessage());
         }
+
         return l;
     }
+
 }
