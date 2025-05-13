@@ -340,13 +340,13 @@ public class ProveedorView extends javax.swing.JDialog implements Vista<Proveedo
         txtDireccion.setText("");
         txtId.requestFocus();
         lblNota.setVisible(false);
-        txtId.setEditable(false);
+        txtId.setEditable(true);
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
 
     private void btnInsertarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertarActionPerformed
         try {
-            proveedor = new Proveedor(txtNombre.getText(), txtContacto.getText(),
+            proveedor = new Proveedor(Integer.parseInt(txtId.getText()),txtNombre.getText(), txtContacto.getText(),
                     txtDireccion.getText());
             Controlador.create(proveedor);
             Controlador.readAll();

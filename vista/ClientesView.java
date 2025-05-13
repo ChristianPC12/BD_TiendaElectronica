@@ -7,6 +7,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import Modelo.Vista.Vista;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -75,6 +79,11 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
         lblCedula.setText("Cédula:");
 
         txtCedula.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCedula.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCedulaKeyReleased(evt);
+            }
+        });
 
         lblNombreC.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lblNombreC.setForeground(new java.awt.Color(255, 255, 255));
@@ -285,19 +294,18 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
                             .addComponent(lblEmail))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtBuscar)
                             .addGroup(pnlDatosLayout.createSequentialGroup()
-                                .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(txtDireccion)
-                                        .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(txtNombreCompl, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(pnlDatosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtNombreCompl, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDatosLayout.createSequentialGroup()
-                                .addGap(298, 298, 298)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtBuscar))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 344, Short.MAX_VALUE)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         pnlDatosLayout.setVerticalGroup(
@@ -369,39 +377,38 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
 
 
     private void btnInsertarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertarActionPerformed
-        try {
+          try {
+        String cedula = txtCedula.getText().trim();
+        String nombre = txtNombreCompl.getText().trim();
+        String direccion = txtDireccion.getText().trim();
+        String telefono = txtTelefono.getText().trim();
+        String email = txtEmail.getText().trim();
 
-            String cedula = txtCedula.getText().trim();
-            String nombre = txtNombreCompl.getText().trim();
-            String direccion = txtDireccion.getText().trim();
-            String telefono = txtTelefono.getText().trim();
-            String email = txtEmail.getText().trim();
-
-            if (cedula.isEmpty() || nombre.isEmpty() || direccion.isEmpty() || telefono.isEmpty() || email.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Todos los campos deben estar llenos.", "Error de validación", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (!cedula.matches("\\d+")) {
-                JOptionPane.showMessageDialog(this, "La cédula debe contener solo números.", "Error de validación", JOptionPane.ERROR_MESSAGE);
-                txtCedula.requestFocus();
-                return;
-            }
-
-            if (!telefono.matches("\\d+")) {
-                JOptionPane.showMessageDialog(this, "El teléfono debe contener solo números.", "Error de validación", JOptionPane.ERROR_MESSAGE);
-                txtTelefono.requestFocus();
-                return;
-            }
-
-            cliente = new Cliente(cedula, nombre, direccion, telefono, email);
-            clienteController.create(cliente);
-            clienteController.readAll();
-            btnLimpiarActionPerformed(null);
-
-        } catch (Exception e) {
-            showError("Error al agregar cliente: " + e.getMessage());
+        if (cedula.isEmpty() || nombre.isEmpty() || direccion.isEmpty() || telefono.isEmpty() || email.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos deben estar llenos.", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        if (!cedula.matches("\\d+")) {
+            JOptionPane.showMessageDialog(this, "La cédula debe contener solo números.", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            txtCedula.requestFocus();
+            return;
+        }
+
+        if (!telefono.matches("\\d+")) {
+            JOptionPane.showMessageDialog(this, "El teléfono debe contener solo números.", "Error de validación", JOptionPane.ERROR_MESSAGE);
+            txtTelefono.requestFocus();
+            return;
+        }
+
+        cliente = new Cliente(cedula, nombre, direccion, telefono, email);
+        clienteController.create(cliente);
+        clienteController.readAll();
+        btnLimpiarActionPerformed(null);
+
+    } catch (Exception e) {
+        showError("Error al agregar cliente: " + e.getMessage());
+    }
     }//GEN-LAST:event_btnInsertarActionPerformed
 
 
@@ -572,6 +579,7 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
         lblNotaClient.setVisible(false);
+        txtNombreCompl.setEditable(false);
     }//GEN-LAST:event_formWindowActivated
 
     private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
@@ -594,6 +602,19 @@ public class ClientesView extends javax.swing.JDialog implements Vista<Cliente> 
     private void txtNombreComplActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreComplActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreComplActionPerformed
+
+    private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased
+
+        String cedula = txtCedula.getText().trim();
+        if (cedula.matches("\\d{9,12}")) { // Solo si es una cédula válida
+            clienteController.buscarNombrePorCedulaAsync(cedula, txtNombreCompl, lblNotaClient);
+        } else {
+            txtNombreCompl.setText("");
+            lblNotaClient.setText("Cédula no válida.");
+            lblNotaClient.setVisible(true);
+        }
+
+    }//GEN-LAST:event_txtCedulaKeyReleased
 
     public JTable getTblColaborador() {
         return tblClient;

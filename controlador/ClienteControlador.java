@@ -13,6 +13,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import Modelo.Vista.Vista;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -152,4 +158,41 @@ public class ClienteControlador {
             throw new RuntimeException("Error al eliminar el cliente: " + e.getMessage());
         }
     }
+     
+     public void buscarNombrePorCedulaAsync(String cedula, JTextField campoNombre, JLabel etiquetaMensaje) {
+    new Thread(() -> {
+String rutaArchivo = System.getProperty("user.dir") + "\\Extract\\Padron\\PADRON_COMPLETO.txt";
+        String nombreEncontrado = null;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+                if (datos.length >= 8 && datos[0].trim().equals(cedula)) {
+                    nombreEncontrado = datos[5].trim() + " " + datos[6].trim() + " " + datos[7].trim();
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            SwingUtilities.invokeLater(() ->
+                vista.showError("Error al leer el padrón: " + e.getMessage())
+            );
+        }
+
+        final String resultado = nombreEncontrado;
+
+        SwingUtilities.invokeLater(() -> {
+            campoNombre.setText("");
+            if (resultado != null) {
+                campoNombre.setText(resultado);
+                etiquetaMensaje.setText("Nombre obtenido automáticamente del padrón.");
+                etiquetaMensaje.setVisible(true);
+            } else {
+                etiquetaMensaje.setText("No se encontró la cédula en el padrón.");
+                etiquetaMensaje.setVisible(true);
+            }
+        });
+    }).start();
+}
+
 }

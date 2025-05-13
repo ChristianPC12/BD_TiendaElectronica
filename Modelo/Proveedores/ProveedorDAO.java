@@ -28,18 +28,20 @@ public class ProveedorDAO extends DAO<ProveedorDTO> {
      * @throws SQLException si ocurre un error en la base de datos.
      */
     @Override
-    public boolean create(ProveedorDTO dto) throws SQLException {
-        if (dto == null || !validatePk(dto.getId())) {
-            return false;
-        }
-        String query = "CALL ProveedoresCreate(?,?,?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, dto.getNombre());
-            stmt.setString(2, dto.getContacto());
-            stmt.setString(3, dto.getDireccion());
-            return stmt.executeUpdate() > 0;
-        }
+public boolean create(ProveedorDTO dto) throws SQLException {
+    if (dto == null || !validatePk(dto.getId())) {
+        return false;
     }
+    String query = "CALL ProveedoresCreate(?,?,?,?)";
+    try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        stmt.setInt(1, dto.getId()); // <-- importante
+        stmt.setString(2, dto.getNombre());
+        stmt.setString(3, dto.getContacto());
+        stmt.setString(4, dto.getDireccion());
+        return stmt.executeUpdate() > 0;
+    }
+}
+
 
     /**
      * Lee un proveedor desde la base de datos usando su ID.

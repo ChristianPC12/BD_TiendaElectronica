@@ -26,10 +26,6 @@ public class ProveedorControlador {
     private final Vista vista;
     private final ProveedorMapper mapper;
 
-//    public ProveedorControlador(Vista vista, ProveedorMapper mapper) {
-//        this.vista = vista;
-//        this.mapper = mapper;
-//    }
     public ProveedorControlador(Vista vista) {
         this.vista = vista;
         mapper = new ProveedorMapper();
