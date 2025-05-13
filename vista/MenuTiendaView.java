@@ -1,6 +1,5 @@
 package vista;
 
-
 import java.awt.Image;
 import java.awt.Toolkit;
 
@@ -14,15 +13,32 @@ import java.awt.Toolkit;
  */
 public class MenuTiendaView extends javax.swing.JFrame {
 
+    private Modelo.User.Login usuario; //
 
     /**
      * Creates new form PaniSys
+     *
+     * @param usuario
      */
-    public MenuTiendaView() {
+    public MenuTiendaView(Modelo.User.Login usuario) {
         initComponents();
+        this.usuario = usuario;
         setLocationRelativeTo(null);
+        validarPermisos();
     }
 
+    private void validarPermisos() {
+        if (!usuario.getRol().equalsIgnoreCase("admin")) {
+            btnProductos.setEnabled(false);
+            btnProveedor.setEnabled(false);
+            btnCliente.setEnabled(false);
+        }
+    }
+
+    public MenuTiendaView() {
+    }
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -42,7 +58,6 @@ public class MenuTiendaView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sistema Gestión de Plantillas ");
-        setIconImage(getIconImage());
 
         jPanel1.setBackground(new java.awt.Color(0, 51, 102));
 
@@ -183,15 +198,14 @@ public class MenuTiendaView extends javax.swing.JFrame {
         ClientesView view = new ClientesView(null, true);
         view.setVisible(true);
     }//GEN-LAST:event_btnClienteActionPerformed
-    
-    @Override
-    public Image getIconImage() {
-        Image retValue = Toolkit.getDefaultToolkit().
-                getImage(ClassLoader.getSystemResource(
-                        "img/recurso.png"));
-        return retValue;
-    }
 
+//    @Override
+//    public Image getIconImage() {
+//        Image retValue = Toolkit.getDefaultToolkit().
+//                getImage(ClassLoader.getSystemResource(
+//                        "img/recurso.png"));
+//        return retValue;
+//    }
     /**
      * @param args the command line arguments
      */

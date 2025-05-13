@@ -5,11 +5,13 @@
 package vista;
 
 import Modelo.User.LoginDAO;
+import java.awt.Image;
+import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 
 /**
  *
- * @author dashs
+ * @author Christian Paniagua Castro
  */
 public class LoginView extends javax.swing.JFrame {
 
@@ -24,18 +26,29 @@ public class LoginView extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    public void validar() {
-        String nombre = txtNombre.getText();
-        String pass = String.valueOf(txtPass.getText());
-        if (!"".equals(nombre) || !"".equals(pass));
+   public void validar() {
+    String nombre = txtNombre.getText();
+    String pass = String.valueOf(txtPass.getText());
+
+    if (!"".equals(nombre) && !"".equals(pass)) {
         lg = login.log(nombre, pass);
+
         if (lg.getCorreo() != null && lg.getPass() != null) {
-            MenuTiendaView view = new MenuTiendaView();
+            MenuTiendaView view = new MenuTiendaView(lg); // pasa el login
             view.setVisible(true);
             dispose();
         } else {
             JOptionPane.showMessageDialog(null, "Nombre o contraseña incorrectas");
         }
+    }
+}
+
+    @Override
+    public Image getIconImage() {
+        Image retValue = Toolkit.getDefaultToolkit().
+                getImage(ClassLoader.getSystemResource(
+                        "img/recurso.png"));
+        return retValue;
     }
 
     @SuppressWarnings("unchecked")
@@ -66,6 +79,7 @@ public class LoginView extends javax.swing.JFrame {
         jPasswordField1.setText("jPasswordField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setIconImage(getIconImage());
 
         jPanel2.setBackground(new java.awt.Color(255, 127, 0));
 
